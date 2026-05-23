@@ -81,16 +81,26 @@ jobs:
           cp signatures.db public/signatures.db || true
 
       - name: Commit updated DB to main
+        # Don't fail the deploy if the push race-conditions with a human push or
+        # another concurrent run — we'll catch the data on the next 5-min tick.
+        continue-on-error: true
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add signatures.db
           if git diff --staged --quiet; then
             echo "No DB changes to commit"
-          else
-            git commit -m "data: poll $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-            git push
+            exit 0
           fi
+          git commit -m "data: poll $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          # Retry with rebase on push race
+          for attempt in 1 2 3; do
+            if git push; then exit 0; fi
+            echo "Push attempt $attempt failed — rebasing on origin/main"
+            git pull --rebase -X ours origin main
+          done
+          echo "All push attempts failed — DB commit lost, will retry next cron tick"
+          exit 0
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
