@@ -45,6 +45,11 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Poll petition (single fetch + insert)
+        # Cloudflare sometimes serves a challenge page to GitHub Actions runners
+        # (data-center IP). Don't fail the whole deploy when that happens — the
+        # page should still publish with the latest news + the freshness dot will
+        # visually go amber/red so staleness is obvious.
+        continue-on-error: true
         run: |
           python - <<'PY'
           from db import connect, insert_reading, latest_total
