@@ -273,22 +273,22 @@ def render(out_path: Path, db_path: Path, static_mode: bool = False) -> None:
             f'<div class="tab-panel" data-panel="reddit">{_render_news_list(reddit_posts)}</div>'
         )
 
+    generated_iso = datetime.now(timezone.utc).isoformat()
     if static_mode:
         meta_refresh = '<meta http-equiv="refresh" content="300">'
         button_html = ''
-        countdown_initial = 'updates every 5 min via GitHub Actions'
-        auto_interval = 0  # disables JS auto-tick
+        auto_interval = 300  # GH Actions cron cadence
     else:
         meta_refresh = ''
         button_html = '<button class="refresh" id="refresh-btn" type="button">Check now</button>'
-        countdown_initial = 'auto-refresh in 60s'
         auto_interval = 60
 
     html = HTML_TEMPLATE.format(
         meta_refresh=meta_refresh,
         button_html=button_html,
-        countdown_initial=countdown_initial,
         auto_interval=auto_interval,
+        static_mode_js="true" if static_mode else "false",
+        generated_iso=generated_iso,
         latest_total=f"{stats['latest_total']:,}",
         goal=f"{stats['goal']:,}",
         progress_pct=f"{stats['progress_pct']:.1f}",
@@ -355,6 +355,37 @@ HTML_TEMPLATE = """<!doctype html>
   header .meta {{
     color: var(--muted);
     font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-variant-numeric: tabular-nums;
+  }}
+  header .meta .dot {{ opacity: 0.5; }}
+  .freshness {{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }}
+  .freshness-dot {{
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--good);
+    box-shadow: 0 0 6px rgba(63, 185, 80, 0.7);
+    animation: freshness-pulse 2s ease-in-out infinite;
+  }}
+  .freshness-dot.stale {{
+    background: var(--accent-2);
+    box-shadow: 0 0 6px rgba(240, 136, 62, 0.7);
+  }}
+  .freshness-dot.dead {{
+    background: #f85149;
+    box-shadow: 0 0 6px rgba(248, 81, 73, 0.7);
+    animation: none;
+  }}
+  @keyframes freshness-pulse {{
+    0%, 100% {{ opacity: 1; }}
+    50%      {{ opacity: 0.45; }}
   }}
   header .right {{
     display: flex;
@@ -723,7 +754,16 @@ HTML_TEMPLATE = """<!doctype html>
   <header>
     <h1>Petition signature tracker</h1>
     <div class="right">
-      <div class="meta">{n_readings} readings · <span id="countdown">{countdown_initial}</span></div>
+      <div class="meta">
+        <span>{n_readings} readings</span>
+        <span class="dot">·</span>
+        <span class="freshness">
+          <span class="freshness-dot" id="freshness-dot"></span>
+          <span id="last-update">just now</span>
+        </span>
+        <span class="dot">·</span>
+        <span id="countdown">next in {auto_interval}s</span>
+      </div>
       {button_html}
     </div>
   </header>
@@ -849,10 +889,42 @@ Plotly.newPlot('chart', [totalTrace, rateTrace], layout, {{ displayModeBar: fals
 const btn = document.getElementById('refresh-btn');
 const toast = document.getElementById('refresh-toast');
 const countdownEl = document.getElementById('countdown');
+const lastUpdateEl = document.getElementById('last-update');
+const freshnessDot = document.getElementById('freshness-dot');
 const AUTO_INTERVAL_S = {auto_interval};
+const STATIC_MODE = {static_mode_js};
+const GENERATED_AT = new Date('{generated_iso}');
 let secondsLeft = AUTO_INTERVAL_S;
 let toastTimer = null;
 let busy = false;
+
+function formatAgo(seconds) {{
+  seconds = Math.max(0, Math.floor(seconds));
+  if (seconds < 5) return 'just now';
+  if (seconds < 60) return seconds + 's ago';
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  if (m < 60) return s ? `${{m}}m ${{s}}s ago` : `${{m}}m ago`;
+  const h = Math.floor(m / 60);
+  return `${{h}}h ${{m % 60}}m ago`;
+}}
+
+function formatRemaining(seconds) {{
+  seconds = Math.max(0, Math.floor(seconds));
+  if (seconds < 60) return `next in ${{seconds}}s`;
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return s ? `next in ${{m}}m ${{s}}s` : `next in ${{m}}m`;
+}}
+
+function updateFreshness() {{
+  const ageS = (Date.now() - GENERATED_AT.getTime()) / 1000;
+  lastUpdateEl.textContent = formatAgo(ageS);
+  // Dot color: green if within one interval, amber if within 2x, red if older
+  freshnessDot.classList.remove('stale', 'dead');
+  if (ageS > AUTO_INTERVAL_S * 2.5) freshnessDot.classList.add('dead');
+  else if (ageS > AUTO_INTERVAL_S * 1.2) freshnessDot.classList.add('stale');
+}}
 
 function showToast(msg, kind) {{
   toast.textContent = msg;
@@ -863,12 +935,24 @@ function showToast(msg, kind) {{
 
 const servedOverHttp = location.protocol === 'http:' || location.protocol === 'https:';
 const hasButton = btn !== null;
-const staticMode = AUTO_INTERVAL_S === 0;
 if (hasButton && !servedOverHttp) {{
   btn.disabled = true;
   btn.title = 'Open via serve.py to enable auto/manual refresh';
-  countdownEl.textContent = 'auto-refresh requires serve.py';
 }}
+
+// Initial paint + 1-second ticker that updates both freshness and countdown
+updateFreshness();
+function tickFreshness() {{
+  updateFreshness();
+  if (STATIC_MODE) {{
+    // Static mode: countdown is the time until the next 5-min cron tick,
+    // estimated from the generation timestamp + the cron interval.
+    const ageS = (Date.now() - GENERATED_AT.getTime()) / 1000;
+    const remaining = AUTO_INTERVAL_S - (ageS % AUTO_INTERVAL_S);
+    countdownEl.textContent = formatRemaining(remaining);
+  }}
+}}
+setInterval(tickFreshness, 1000);
 
 async function triggerRefresh(manual) {{
   if (busy || !servedOverHttp || !hasButton) return;
@@ -934,7 +1018,7 @@ document.querySelectorAll('.tab').forEach(tab => {{
   }});
 }});
 
-if (servedOverHttp && !staticMode && hasButton) {{
+if (servedOverHttp && !STATIC_MODE && hasButton) {{
   setInterval(() => {{
     if (busy) return;
     secondsLeft -= 1;
@@ -942,7 +1026,7 @@ if (servedOverHttp && !staticMode && hasButton) {{
       countdownEl.textContent = 'refreshing…';
       triggerRefresh(false);
     }} else {{
-      countdownEl.textContent = 'auto-refresh in ' + secondsLeft + 's';
+      countdownEl.textContent = formatRemaining(secondsLeft);
     }}
   }}, 1000);
 }}
