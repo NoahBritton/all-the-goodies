@@ -622,11 +622,103 @@ HTML_TEMPLATE = """<!doctype html>
     font-size: 12px;
     margin-top: 32px;
   }}
+  /* ---- Petition banner ---- */
+  #petition-banner {{
+    position: relative;
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 35%, #58a6ff 100%);
+    background-size: 200% 200%;
+    animation: banner-shift 12s ease infinite;
+    color: #fff;
+    padding: 14px 56px 14px 24px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(0);
+    transition: transform 0.35s ease, opacity 0.35s ease;
+  }}
+  #petition-banner.hidden {{
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+  }}
+  @keyframes banner-shift {{
+    0%   {{ background-position: 0% 50%; }}
+    50%  {{ background-position: 100% 50%; }}
+    100% {{ background-position: 0% 50%; }}
+  }}
+  .banner-inner {{
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+  }}
+  .banner-text {{
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  }}
+  .banner-text strong {{
+    font-weight: 700;
+    font-size: 15px;
+  }}
+  .banner-cta {{
+    background: rgba(255, 255, 255, 0.95);
+    color: #1a1a2e;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    white-space: nowrap;
+  }}
+  .banner-cta:hover {{
+    background: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-decoration: none;
+  }}
+  .banner-cta:active {{ transform: translateY(0); }}
+  .banner-close {{
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    background: transparent;
+    border: 0;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.12s ease, color 0.12s ease;
+  }}
+  .banner-close:hover {{
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+  }}
   a {{ color: var(--accent); text-decoration: none; }}
   a:hover {{ text-decoration: underline; }}
 </style>
 </head>
 <body>
+<div id="petition-banner" role="region" aria-label="Sign the petition">
+  <div class="banner-inner">
+    <span class="banner-text">
+      <strong>Want Destiny 3?</strong> Add your name to the petition asking Sony to greenlight it.
+    </span>
+    <a class="banner-cta" href="https://www.change.org/p/petition-sony-to-develop-destiny-3"
+       target="_blank" rel="noopener">Sign the petition →</a>
+  </div>
+  <button class="banner-close" id="banner-close" type="button" aria-label="Dismiss banner">×</button>
+</div>
 <div class="wrap">
   <header>
     <h1>Petition signature tracker</h1>
@@ -689,7 +781,6 @@ HTML_TEMPLATE = """<!doctype html>
   <div class="footer-meta">
     <span>Last reading: {latest_ts}</span>
     <span>Page generated: {generated_at}</span>
-    <span><a href="https://www.change.org/p/petition-sony-to-develop-destiny-3" target="_blank" rel="noopener">change.org/p/petition-sony-to-develop-destiny-3</a></span>
   </div>
 </div>
 
@@ -818,6 +909,19 @@ async function triggerRefresh(manual) {{
 
 if (hasButton) {{
   btn.addEventListener('click', () => triggerRefresh(true));
+}}
+
+const banner = document.getElementById('petition-banner');
+const bannerClose = document.getElementById('banner-close');
+if (banner && localStorage.getItem('petitionBannerDismissed') === '1') {{
+  banner.style.display = 'none';
+}}
+if (bannerClose) {{
+  bannerClose.addEventListener('click', () => {{
+    banner.classList.add('hidden');
+    setTimeout(() => {{ banner.style.display = 'none'; }}, 400);
+    localStorage.setItem('petitionBannerDismissed', '1');
+  }});
 }}
 
 document.querySelectorAll('.tab').forEach(tab => {{

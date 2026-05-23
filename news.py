@@ -49,47 +49,56 @@ REDDIT_SUBS = [
 ]
 
 # Keyword groups: an item matches if ANY group matches.
-# A group matches if ALL its keywords appear in the haystack (case-insensitive).
+# A group matches if ALL its keywords appear in the TITLE (case-insensitive).
+# Snippet/description is intentionally NOT matched — too noisy (e.g. a generic
+# RSS digest with "...Bungie..." buried in the body would surface unrelated stuff).
 KEYWORD_GROUPS = [
+    # Strong: any of these phrases in the title is a hit
     ["destiny 3"],
     ["destiny iii"],
     ["destiny three"],
+    ["d3 petition"],
+    ["next destiny"],
+    ["future destiny"],
+    # Medium: pairs that together strongly imply on-topic
     ["destiny", "sequel"],
     ["destiny", "petition"],
-    ["petition", "sony"],
-    ["bungie", "sony"],
-    ["sony", "bungie"],
     ["destiny", "future of"],
-    ["next destiny"],
     ["bungie", "layoffs"],
-    ["bungie", "marathon"],
+    ["bungie", "marathon"],  # Bungie's other game, often discussed alongside D3 plans
+    ["bungie", "sony"],
+    ["sony", "destiny"],
+    ["petition", "sony", "bungie"],  # require all three
 ]
 
-EXCLUDE_PATTERNS = [
-    r"\bdestiny\s*2\b",  # don't surface generic D2 news unless another keyword also hit
+# If title matches ANY of these patterns, drop the item.
+# Use to kill known false positives that creep in.
+EXCLUDE_REGEX = [
+    r"\bsteam\s+controller\b",
+    r"\bsteam\s+deck\b",
+    r"\bplaystation\s+portal\b",
+    r"\bdestiny\s*2\b",       # generic D2 patch notes etc.
+    r"\bmarathon\s+(review|beta|alpha)\b",  # Marathon-specific without D3 angle
+    r"\bdestiny\s+rising\b",  # mobile game
 ]
 
 
-def _matches(text: str) -> bool:
-    t = text.lower()
+def _matches(title: str) -> bool:
+    t = title.lower()
     for group in KEYWORD_GROUPS:
         if all(kw in t for kw in group):
             return True
     return False
 
 
-def _is_excluded_only(text: str) -> bool:
-    """If text matches our exclude patterns AND has no other strong signal."""
-    t = text.lower()
-    if any(re.search(p, t) for p in EXCLUDE_PATTERNS):
-        # excluded unless one of the petition-/d3-specific groups matches
-        strong = [
-            ["destiny 3"], ["destiny iii"], ["destiny three"],
-            ["petition", "sony"], ["destiny", "petition"],
-            ["bungie", "sony"], ["sony", "bungie"],
-        ]
-        return not any(all(kw in t for kw in g) for g in strong)
-    return False
+def _is_excluded(title: str) -> bool:
+    """Drop the item if its title matches a known-noise pattern, UNLESS it
+    also has a high-confidence Destiny-3-specific phrase."""
+    t = title.lower()
+    if not any(re.search(p, t) for p in EXCLUDE_REGEX):
+        return False
+    strong = ["destiny 3", "destiny iii", "destiny three", "d3 petition", "destiny petition"]
+    return not any(s in t for s in strong)
 
 
 def _parse_rss(xml_text: str, source: str) -> list[dict]:
@@ -226,13 +235,29 @@ def fetch_sources(timeout: float = 10.0) -> list[dict]:
 def filter_items(items: Iterable[dict]) -> list[dict]:
     out = []
     for it in items:
-        haystack = f"{it['title']} {it.get('snippet', '')}"
-        if not _matches(haystack):
+        title = it["title"]
+        if not _matches(title):
             continue
-        if _is_excluded_only(haystack):
+        if _is_excluded(title):
             continue
         out.append(it)
     return out
+
+
+def purge_excluded(conn: sqlite3.Connection) -> int:
+    """Drop already-stored items whose titles now match the exclusion list.
+    Useful after tightening the filter — sweeps out historical false positives."""
+    n_before = conn.execute("SELECT COUNT(*) FROM news_items").fetchone()[0]
+    cursor = conn.execute("SELECT id, title FROM news_items")
+    bad_ids = []
+    for row_id, title in cursor.fetchall():
+        if not _matches(title) or _is_excluded(title):
+            bad_ids.append(row_id)
+    for bid in bad_ids:
+        conn.execute("DELETE FROM news_items WHERE id = ?", (bid,))
+    conn.commit()
+    n_after = conn.execute("SELECT COUNT(*) FROM news_items").fetchone()[0]
+    return n_before - n_after
 
 
 def store_items(conn: sqlite3.Connection, items: Iterable[dict]) -> int:
