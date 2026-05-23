@@ -1,0 +1,30 @@
+[Unit]
+Description=Petition tracker JSON API (Change.org Destiny 3 petition)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=petition
+Group=petition
+WorkingDirectory=/opt/petition-tracker
+Environment=PYTHONUNBUFFERED=1
+Environment=HOST=127.0.0.1
+Environment=PORT=8765
+Environment=POLL_INTERVAL_S=60
+Environment=NEWS_INTERVAL_S=300
+Environment=ALLOWED_ORIGINS=https://axogames.dev,https://www.axogames.dev
+ExecStart=/opt/petition-tracker/.venv/bin/python /opt/petition-tracker/api_server.py
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# Light hardening
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
