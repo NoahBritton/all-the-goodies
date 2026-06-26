@@ -1,0 +1,31 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "All Rights Reserved"
+issueTrackerURL = "https://github.com/NoahBritton/petition-tracker/issues"
+
+[[mods]]
+modId = "allthegoodies"
+version = "0.1.0"
+displayName = "All The Goodies"
+authors = "Noah"
+description = '''
+Progression-aware loot crates (the "ATM Cache") and quality-of-life goodies for All The Mods 10.
+Rewards scale to where you are in the pack, so a jackpot is always useful right now.
+See SPEC.md in the project repository.
+'''
+
+# Minecraft
+[[dependencies.allthegoodies]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1,1.22)"
+ordering = "NONE"
+side = "BOTH"
+
+# NeoForge
+[[dependencies.allthegoodies]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1,)"
+ordering = "NONE"
+side = "BOTH"

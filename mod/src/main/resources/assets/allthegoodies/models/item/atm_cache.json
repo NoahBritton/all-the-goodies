@@ -1,0 +1,7 @@
+{
+  "comment": "Placeholder model: reuses the vanilla bundle texture (looks like a pouch). Swap layer0 to allthegoodies:item/atm_cache once a real texture exists.",
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/bundle"
+  }
+}
