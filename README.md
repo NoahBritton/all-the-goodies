@@ -1,102 +1,46 @@
-# petition-tracker
+# ATM10 — Road to the ATM Star (Builder's Wiki)
 
-Polls a Change.org petition page for its signature count, stores readings in SQLite, and renders the trend as a static PNG or a live-updating web dashboard.
+A comprehensive, reference-grade guide to the Minecraft modpack **All The Mods 10
+(ATM10)**, centered on the full progression "road to the ATM Star."
 
-Default target: [petition-sony-to-develop-destiny-3](https://www.change.org/p/petition-sony-to-develop-destiny-3) (ID `491299022`).
+> **What this is for.** This wiki is written primarily as a **builder's knowledge base** —
+> reference material for designing an ATM10 helper add-on (the "goodie bags" project): a mod
+> that adds quality-of-life items and tweaks to make progression friendlier for players who
+> **don't know the pack and aren't strong at Minecraft**. It doubles as a readable human
+> guide. Pages [10](docs/10-newcomer-friction.md) and [11](docs/11-mod-build-opportunities.md)
+> are the bridge from "guide" to "buildable mod design."
 
-## How it works
+## Pack target & accuracy
 
-Change.org embeds petition state in an inline `<script>` block in the HTML. The scraper fetches the page with a realistic desktop `User-Agent` and extracts:
+| | |
+|---|---|
+| Pack | All The Mods 10 (ATM10) |
+| Minecraft | 1.21.1 |
+| Loader | NeoForge |
+| Mod count | ~500 |
+| Current release (June 2026) | ATM10 v7.0 (released May 2026) |
+| Compiled | 2026-06-25, from web research + the pack's own KubeJS recipe scripts |
 
-```
-"signatureCount":{"displayed":N,"total":N,"goal":N}
-"weeklySignatureCount":N
-```
+> ⚠️ **Accuracy caveat — read this.** ATM10 retunes recipes, quantities, and even which
+> mods ship with nearly every release. Recipe-level claims here are marked **✅ JEI** where
+> you should confirm against your installed version in-game (press **R** on an item for its
+> recipe, **U** for uses). The ATM Star recipe in particular was extracted from the pack's
+> KubeJS source and is accurate to that snapshot, but **treat exact counts as
+> verify-before-you-hardcode** for any mod you build on top of it.
 
-No headless browser needed. If Cloudflare ever serves a JS challenge or 403s the request, the scraper will retry with exponential backoff and then raise a clear error — at that point a real browser or residential proxy would be needed, but that's out of scope here.
+## How to navigate
 
-## Setup
+Start at **[docs/index.md](docs/index.md)** for the full table of contents, or jump in:
 
-```powershell
-cd petition-tracker
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-## Run the poller
-
-```powershell
-python poll.py                    # default: 5 min interval, default petition
-python poll.py --interval 600     # 10 min
-python poll.py --slug some-other-petition-slug
-```
-
-Each successful poll appends a row to `signatures.db`. Rows with an unchanged `total` are skipped to keep the DB lean. Logs stream to stdout and `poll.log`. Ctrl-C stops cleanly.
-
-Env vars `POLL_INTERVAL` and `PETITION_SLUG` also work.
-
-## Render the graph
-
-```powershell
-python graph.py --save trend.png         # static PNG (matplotlib)
-python graph.py --html dashboard.html    # styled standalone HTML dashboard
-python graph.py --export readings.csv    # dump raw readings to CSV
-```
-
-The HTML dashboard is self-contained (Plotly.js from CDN) — just open the file in any browser. It shows:
-
-- **Stat cards** — current count, recent rate (last hour), ETA to goal, % progress.
-- **Progress bar** — total vs goal.
-- **Chart** — total signatures (blue line) + hourly-bucketed signing rate (orange bars) + goal line. Bucketing per hour keeps the rate readable; raw between-poll deltas are too jittery to be useful.
-- **Recent readings table** — last 12 polls with delta column.
-
-The page has a `<meta refresh>` set to 60s, so just leave the tab open. To keep the file fresh, run the poller with `--html`:
-
-```powershell
-python poll.py --interval 300 --html dashboard.html
-```
-
-Each successful poll re-renders `dashboard.html`, and the open browser tab picks it up on the next auto-refresh.
-
-### Manual "Check now" button
-
-The dashboard has a **Check now** button that triggers a fresh scrape on demand. It only works when the page is served over HTTP (it needs a backend endpoint to talk to). Run:
-
-```powershell
-python serve.py --port 8765
-```
-
-Then open <http://127.0.0.1:8765/>. Clicking **Check now** POSTs to `/refresh`, which fetches the petition page, inserts the new reading if `total` changed, re-renders the HTML, and reloads the tab.
-
-You can run `serve.py` and `poll.py --html dashboard.html` side by side — the poller handles the 5-minute cadence; the button is for when you want to force an update right now.
-
-## Backfill historic data
-
-Provide a CSV with at least `ts,total` columns (optional: `displayed,goal,weekly`):
-
-```csv
-ts,total
-2026-04-01T12:00:00Z,11200
-2026-04-15T12:00:00Z,11540
-```
-
-Then:
-
-```powershell
-python backfill.py path\to\historic.csv
-```
-
-Duplicate timestamps are skipped, so re-running is safe.
-
-## Tests
-
-```powershell
-pytest
-```
-
-## Notes / caveats
-
-- Change.org sits behind Cloudflare. A bare Python `User-Agent` is reliably 403'd; the spoofed Chrome UA in `scraper.py` currently works. If that stops working, the next steps would be a real-browser-based scraper (Playwright with `stealth`) or a residential proxy.
-- All timestamps are stored as ISO 8601 in UTC.
-- The signing-rate trace can dip negative if the page's `total` ever goes down (Change.org occasionally removes signatures); the poller logs a warning when this happens.
+1. [Overview](docs/00-overview.md) — what ATM10 is, JEI, FTB Quests, how progression is gated
+2. [Getting Started](docs/01-getting-started.md) — the first few hours
+3. [The Progression Ladder](docs/02-progression-ladder.md) — the metal/alloy spine of the pack
+4. [Ore & Resource Processing](docs/03-ore-and-resources.md) — Mekanism 2x→5x, Mystical Agriculture
+5. [Power](docs/04-power.md) — generation, storage, transfer by stage
+6. [Storage & Automation](docs/05-storage-automation.md) — AE2 vs Refined Storage, Mekanism, Create
+7. [Dimensions](docs/06-dimensions.md) — where to go and what each gates
+8. [Combat, Bosses & Magic](docs/07-combat-bosses-magic.md) — Cataclysm, Apotheosis, mob farms
+9. [Key Mods Reference](docs/08-key-mods.md) — the progression-relevant mods, by role
+10. [The ATM Star](docs/09-atm-star.md) — the full endgame recipe tree
+11. [Newcomer Friction Points](docs/10-newcomer-friction.md) — where new/low-skill players get stuck
+12. [Helper-Mod Build Opportunities](docs/11-mod-build-opportunities.md) — concrete "goodie bag" designs
