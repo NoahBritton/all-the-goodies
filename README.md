@@ -28,6 +28,12 @@ A comprehensive, reference-grade guide to the Minecraft modpack **All The Mods 1
 > KubeJS source and is accurate to that snapshot, but **treat exact counts as
 > verify-before-you-hardcode** for any mod you build on top of it.
 
+## The mod project
+
+The helper add-on this wiki feeds into is specified in **[SPEC.md](SPEC.md)** — the controlling
+design doc (headline feature: a CS:GO-crate-style, progression-aware loot system; plus QoL
+helpers). That's the north-star document for the build; this `docs/` wiki is its reference base.
+
 ## How to navigate
 
 Start at **[docs/index.md](docs/index.md)** for the full table of contents, or jump in:
