@@ -34,6 +34,9 @@ The helper add-on this wiki feeds into is specified in **[SPEC.md](SPEC.md)** â€
 design doc (headline feature: a CS:GO-crate-style, progression-aware loot system; plus QoL
 helpers). That's the north-star document for the build; this `docs/` wiki is its reference base.
 
+Picking the project up to develop locally? Start with **[HANDOFF.md](HANDOFF.md)** â€” current
+state, build steps, what's done vs. next, and the version pins to verify.
+
 ## How to navigate
 
 Start at **[docs/index.md](docs/index.md)** for the full table of contents, or jump in:
