@@ -1,6 +1,7 @@
 package com.allthegoodies;
 
 import com.allthegoodies.progression.ATGAttachments;
+import com.allthegoodies.registry.ATGBlocks;
 import com.allthegoodies.registry.ATGItems;
 import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
@@ -19,6 +20,7 @@ public final class AllTheGoodies {
     public AllTheGoodies(IEventBus modEventBus) {
         // Registries
         ATGAttachments.ATTACHMENTS.register(modEventBus);
+        ATGBlocks.BLOCKS.register(modEventBus);
         ATGItems.ITEMS.register(modEventBus);
 
         LOGGER.info("[All The Goodies] initialising — ATM Cache + progression engine loaded");

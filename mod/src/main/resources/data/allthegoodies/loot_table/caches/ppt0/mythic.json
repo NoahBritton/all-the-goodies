@@ -1,6 +1,6 @@
 {
   "comment": "PPT 0 'Knife' jackpot: a near-unbreakable starter pick — uber-useful at hour one.",
-  "type": "minecraft:advancement_reward",
+  "type": "minecraft:chest",
   "pools": [
     {
       "rolls": 1,
@@ -10,11 +10,10 @@
           "name": "minecraft:iron_pickaxe",
           "functions": [
             {
-              "function": "minecraft:set_components",
-              "components": {
-                "minecraft:enchantments": {
-                  "levels": { "minecraft:unbreaking": 5, "minecraft:efficiency": 3 }
-                }
+              "function": "minecraft:set_enchantments",
+              "enchantments": {
+                "minecraft:unbreaking": 3,
+                "minecraft:efficiency": 5
               }
             }
           ]
