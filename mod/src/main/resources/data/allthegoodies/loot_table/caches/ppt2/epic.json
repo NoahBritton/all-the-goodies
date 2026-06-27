@@ -1,0 +1,10 @@
+{
+  "comment": "mekanism:alloy_infused ID needs JEI verification",
+  "type": "minecraft:chest",
+  "pools": [
+    { "rolls": 1, "entries": [{ "type": "minecraft:item", "name": "mekanism:ingot_osmium",
+        "functions": [{ "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 16, "max": 32 } }] }] },
+    { "rolls": 1, "entries": [{ "type": "minecraft:item", "name": "minecraft:netherite_ingot",
+        "functions": [{ "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 1, "max": 2 } }] }] }
+  ]
+}

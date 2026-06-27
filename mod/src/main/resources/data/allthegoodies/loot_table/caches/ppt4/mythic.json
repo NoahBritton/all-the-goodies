@@ -1,0 +1,12 @@
+{
+  "comment": "vibranium_pickaxe + piglich_heart IDs — verify in JEI. This is the knife-tier jackpot at PPT4.",
+  "type": "minecraft:chest",
+  "pools": [
+    { "rolls": 1, "entries": [{ "type": "minecraft:item", "name": "allthemodium:vibranium_pickaxe",
+        "functions": [{ "function": "minecraft:set_enchantments", "enchantments": { "minecraft:efficiency": 5, "minecraft:fortune": 3, "minecraft:unbreaking": 3, "minecraft:mending": 1 } }] }] },
+    { "rolls": 1, "entries": [{ "type": "minecraft:item", "name": "allthemodium:piglich_heart",
+        "functions": [{ "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 4, "max": 6 } }] }] },
+    { "rolls": 1, "entries": [{ "type": "minecraft:item", "name": "allthemodium:vibranium_ingot",
+        "functions": [{ "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 8, "max": 16 } }] }] }
+  ]
+}
