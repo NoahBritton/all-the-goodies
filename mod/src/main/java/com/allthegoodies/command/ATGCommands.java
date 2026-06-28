@@ -13,7 +13,10 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -54,7 +57,9 @@ public final class ATGCommands {
                         .executes(ctx -> giveCaches(ctx.getSource(), 1))
                         .then(Commands.argument("count", IntegerArgumentType.integer(1, 64))
                                 .executes(ctx -> giveCaches(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "count")))))
-                .then(open);
+                .then(open)
+                .then(Commands.literal("zombie")
+                        .executes(ctx -> spawnDebugZombie(ctx.getSource())));
 
         event.getDispatcher().register(root);
     }
@@ -91,6 +96,20 @@ public final class ATGCommands {
                         "Force-opened " + rarity.name() + " @ ppt " + ppt + " → " + granted + " item(s)")
                 .withStyle(ChatFormatting.GRAY), false);
         return granted;
+    }
+
+    private static int spawnDebugZombie(CommandSourceStack src) throws CommandSyntaxException {
+        ServerPlayer p = src.getPlayerOrException();
+        ServerLevel level = p.serverLevel();
+        Zombie zombie = new Zombie(EntityType.ZOMBIE, level);
+        zombie.moveTo(p.getX(), p.getY(), p.getZ(), 0f, 0f);
+        zombie.setNoAi(true);
+        zombie.setPersistenceRequired();
+        zombie.addTag("atg_debug_zombie");
+        level.addFreshEntity(zombie);
+        src.sendSuccess(() -> Component.literal("Spawned debug zombie — it will respawn on death")
+                .withStyle(ChatFormatting.GRAY), false);
+        return 1;
     }
 
     private ATGCommands() {}
