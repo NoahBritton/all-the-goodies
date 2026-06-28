@@ -64,6 +64,12 @@ These are **explicitly not** in v0.1. When a shiny idea appears mid-sprint, it l
 - Crate-shaped block model + crash-landed tilt (block entity renderer)
 - Roulette GUI (CS:GO scroll animation)
 - Prime Cache (guaranteed-minimum-color find)
+- **Ore-value scaling** — diamond/ancient debris/modded rare ores bias toward higher rarity cache + higher drop %, coal stays at floor (M2 tuning pass)
+- **Cache Buster** — tool/item that instantly breaks wild_cache blocks, maybe AOE
+- **Cache Mass-Opener** — right-click a stack to open all at once with summary readout
+- **Fusion Block** — combine N lower-tier caches into 1 higher-tier
+- **Cache Merchant Villager** — special trades: caches for rare items
+- **Music HUD mod** — separate mod, show currently playing ATM music track name (probably exists already)
 - FTB Quests PPT signals
 - Other QoL: tech-wall bridge kits, safety-net items, Dimensional Atlas, boss-prep checklist
 
