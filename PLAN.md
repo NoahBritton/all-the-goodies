@@ -64,6 +64,10 @@ These are **explicitly not** in v0.1. When a shiny idea appears mid-sprint, it l
 - Crate-shaped block model + crash-landed tilt (block entity renderer)
 - Roulette GUI (CS:GO scroll animation)
 - Prime Cache (guaranteed-minimum-color find)
+- **Cache Buster** — tool/item that instantly breaks wild_cache blocks and maybe AOE-pops nearby ones
+- **Cache Mass-Opener** — right-click a stack of caches to open all at once (with summary readout)
+- **Fusion Block / Job Block** — combine N lower-tier caches into 1 higher-tier (e.g. 5 consumer → 1 industrial)
+- **Cache Merchant Villager** — special trades: caches for rare items, custom villager type
 - FTB Quests PPT signals
 - Other QoL: tech-wall bridge kits, safety-net items, Dimensional Atlas, boss-prep checklist
 
