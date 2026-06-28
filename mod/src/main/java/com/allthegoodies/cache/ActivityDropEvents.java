@@ -78,6 +78,7 @@ public final class ActivityDropEvents {
     }
 
     private static void grantCache(ServerPlayer player, ServerLevel level) {
+        if (!AntiFarmLimiter.tryGrant(player)) return;
         int ppt = ProgressionTier.get(player);
         RarityTier rarity = CacheRoller.rollRarity(level.getRandom());
         ItemStack cache = ATGItems.coloredCacheFor(rarity).get().getDefaultInstance();
