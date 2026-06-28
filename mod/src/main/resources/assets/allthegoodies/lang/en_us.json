@@ -1,10 +1,10 @@
 {
   "item.allthegoodies.atm_cache": "ATM Cache",
-  "item.allthegoodies.cache_consumer":   "Consumer Cache",
-  "item.allthegoodies.cache_industrial": "Industrial Cache",
-  "item.allthegoodies.cache_milspec":    "Mil-Spec Cache",
-  "item.allthegoodies.cache_restricted": "Restricted Cache",
-  "item.allthegoodies.cache_classified": "Classified Cache",
-  "item.allthegoodies.cache_covert":     "Covert Cache",
+  "item.allthegoodies.cache_consumer":   "Common Cache",
+  "item.allthegoodies.cache_industrial": "Uncommon Cache",
+  "item.allthegoodies.cache_milspec":    "Rare Cache",
+  "item.allthegoodies.cache_restricted": "Epic Cache",
+  "item.allthegoodies.cache_classified": "Legendary Cache",
+  "item.allthegoodies.cache_covert":     "Mythic Cache",
   "block.allthegoodies.wild_cache": "Wild Cache"
 }
