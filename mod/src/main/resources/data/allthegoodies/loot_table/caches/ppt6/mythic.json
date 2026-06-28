@@ -1,0 +1,10 @@
+{
+  "comment": "Knife-tier at PPT6. ATM Star components TBD — using nether stars as placeholder until ATM6 star items are verified in JEI.",
+  "type": "minecraft:chest",
+  "pools": [
+    { "rolls": 1, "entries": [{ "type": "minecraft:item", "name": "minecraft:nether_star",
+        "functions": [{ "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 5, "max": 8 } }] }] },
+    { "rolls": 1, "entries": [{ "type": "minecraft:item", "name": "allthemodium:unobtainium_ingot",
+        "functions": [{ "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 48, "max": 64 } }] }] }
+  ]
+}

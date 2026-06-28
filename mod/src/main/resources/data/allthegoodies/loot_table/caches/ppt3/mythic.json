@@ -1,0 +1,10 @@
+{
+  "comment": "allthemodium:allthemodium_pickaxe ID — verify in JEI",
+  "type": "minecraft:chest",
+  "pools": [
+    { "rolls": 1, "entries": [{ "type": "minecraft:item", "name": "allthemodium:allthemodium_pickaxe",
+        "functions": [{ "function": "minecraft:set_enchantments", "enchantments": { "minecraft:efficiency": 5, "minecraft:fortune": 3, "minecraft:unbreaking": 3, "minecraft:mending": 1 } }] }] },
+    { "rolls": 1, "entries": [{ "type": "minecraft:item", "name": "allthemodium:allthemodium_ingot",
+        "functions": [{ "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 12, "max": 16 } }] }] }
+  ]
+}

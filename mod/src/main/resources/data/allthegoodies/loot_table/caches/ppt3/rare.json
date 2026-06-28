@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    { "rolls": 1, "entries": [{ "type": "minecraft:item", "name": "allthemodium:allthemodium_ingot",
+        "functions": [{ "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 2, "max": 5 } }] }] },
+    { "rolls": 1, "entries": [{ "type": "minecraft:item", "name": "minecraft:netherite_pickaxe",
+        "functions": [{ "function": "minecraft:set_enchantments", "enchantments": { "minecraft:efficiency": 5, "minecraft:unbreaking": 3, "minecraft:mending": 1 } }] }] }
+  ]
+}

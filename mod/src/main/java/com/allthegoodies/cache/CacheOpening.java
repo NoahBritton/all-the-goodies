@@ -37,9 +37,8 @@ public final class CacheOpening {
         LootTable table = level.getServer().reloadableRegistries().getLootTable(key);
 
         LootParams params = new LootParams.Builder(level)
-                .withParameter(LootContextParams.THIS_ENTITY, player)
                 .withParameter(LootContextParams.ORIGIN, player.position())
-                .create(LootContextParamSets.ADVANCEMENT_REWARD);
+                .create(LootContextParamSets.CHEST);
 
         List<ItemStack> rolled = table.getRandomItems(params);
         for (ItemStack reward : rolled) {

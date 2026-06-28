@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    { "rolls": 1, "entries": [{ "type": "minecraft:item", "name": "allthemodium:vibranium_ingot",
+        "functions": [{ "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 1, "max": 2 } }] }] },
+    { "rolls": 1, "entries": [{ "type": "minecraft:item", "name": "allthemodium:allthemodium_ingot",
+        "functions": [{ "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 4, "max": 8 } }] }] }
+  ]
+}

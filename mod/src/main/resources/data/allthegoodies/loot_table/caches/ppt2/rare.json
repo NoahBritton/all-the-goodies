@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    { "rolls": 1, "entries": [{ "type": "minecraft:item", "name": "mekanism:ingot_osmium",
+        "functions": [{ "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 8, "max": 16 } }] }] },
+    { "rolls": 1, "entries": [{ "type": "minecraft:item", "name": "minecraft:diamond_pickaxe",
+        "functions": [{ "function": "minecraft:set_enchantments", "enchantments": { "minecraft:efficiency": 5, "minecraft:unbreaking": 3 } }] }] }
+  ]
+}
