@@ -41,6 +41,8 @@ neoForge {
 
 dependencies {
     compileOnly "mezz.jei:jei-1.21.1-neoforge-api:19.27.0.343"
+    compileOnly files("C:/Users/noahs/curseforge/minecraft/Instances/All the Mods 10 - ATM10 (1)/mods/Jade-1.21.1-NeoForge-15.10.5.jar")
+    compileOnly files("C:/Users/noahs/curseforge/minecraft/Instances/All the Mods 10 - ATM10 (1)/mods/Patchouli-1.21.1-93-NEOFORGE.jar")
 }
 
 tasks.withType(JavaCompile).configureEach {

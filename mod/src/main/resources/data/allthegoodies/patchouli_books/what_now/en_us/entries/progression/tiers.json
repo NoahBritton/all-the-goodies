@@ -1,0 +1,27 @@
+{
+  "name": "Progression Tiers",
+  "category": "allthegoodies:progression",
+  "icon": "allthemodium:allthemodium_ingot",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "All The Goodies watches what you find and automatically figures out where you are in the pack. This $(italic)Progression Tier$() (PPT, 0–6) only ever goes up — it latches the moment you hit a milestone, then stays there forever."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "The Tiers",
+      "text": "$(li)$(bold)0 — Stranded:$() Brand new. No markers yet.$(br)$(li)$(bold)1 — Established:$() Found iron.$(br)$(li)$(bold)2 — Industrial:$() Touched Mekanism (osmium/steel/enricher).$(br)$(li)$(bold)3 — Allthemodium:$() Found Allthemodium ore or ingot.$(br)$(li)$(bold)4 — Vibranium:$() Found Vibranium.$(br)$(li)$(bold)5 — Unobtainium:$() Found Unobtainium.$(br)$(li)$(bold)6 — Star-chase:$() Touched alloys, Piglich hearts, or an ATM Star."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Tier-Up Rewards",
+      "text": "The first time you hit a new tier, you get a free $(item)ATM Cache$() and a gold message announcing your stage. The cache uses your new tier's loot pool — it's a reward for the climb, not a consolation prize."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Check Your Tier",
+      "text": "Run $(thing)/atg ppt$() to see your current tier and its name.$(br2)Run $(thing)/atg stars$() to see how many ATM Stars you've collected toward the 25 needed to complete the pack.$(br2)These are op-level commands — ask your server admin if you need them."
+    }
+  ]
+}

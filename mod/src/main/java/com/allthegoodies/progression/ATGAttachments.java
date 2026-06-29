@@ -24,5 +24,13 @@ public final class ATGAttachments {
                             .copyOnDeath()
                             .build());
 
+    /** How many ATM Stars this player has crafted/obtained. ATM10 requires 25 to complete. */
+    public static final Supplier<AttachmentType<Integer>> ATM_STAR_COUNT =
+            ATTACHMENTS.register("atm_star_count", () ->
+                    AttachmentType.builder(() -> 0)
+                            .serialize(Codec.INT)
+                            .copyOnDeath()
+                            .build());
+
     private ATGAttachments() {}
 }

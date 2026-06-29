@@ -1,0 +1,27 @@
+{
+  "name": "What Is a Cache?",
+  "category": "allthegoodies:caches",
+  "icon": "allthegoodies:atm_cache",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)ATM Caches$() are loot boxes that scale to where you are in the pack. The rewards inside always make sense for your current stage — no getting endgame loot when you just started, no getting useless starter gear when you're deep into the tech tree."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "How to Get Them",
+      "text": "$(li)$(bold)Kill hostile mobs$() — roughly 1 in 20 kills drops one$(br2)$(li)$(bold)Mine ore$() — roughly 1 in 50 ore blocks drops one$(br2)$(li)$(bold)Reach a new tier$() — the first milestone item you find at each stage guarantees one$(br2)$(li)$(bold)Find Wild Caches$() — break them just like a block"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Opening a Cache",
+      "text": "Right-click an $(item)ATM Cache$() to open it. It rolls your rarity first (Common through Mythic), then draws from a loot pool matched to that rarity and your current progression tier.$(br2)Colored caches you find in the world already have their rarity decided — right-click to open."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Anti-Farm Limiter",
+      "text": "Activity drops are rate-limited: you can receive at most 5 caches in any 5-minute window from killing and mining. This resets naturally as you play normally. The limit doesn't apply to milestone drops or wild cache breaks."
+    }
+  ]
+}

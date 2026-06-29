@@ -1,0 +1,9 @@
+{
+  "name": "What Now?",
+  "landing_text": "Welcome to All The Goodies — your companion guide for ATM10 caches, loot, and what to do at every stage of the pack.",
+  "mod_id": "allthegoodies",
+  "version": 1,
+  "model": "patchouli:book_brown",
+  "show_progress": false,
+  "i18n": false
+}
