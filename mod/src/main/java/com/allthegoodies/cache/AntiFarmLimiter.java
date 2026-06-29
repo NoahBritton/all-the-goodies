@@ -1,5 +1,6 @@
 package com.allthegoodies.cache;
 
+import com.allthegoodies.config.ATGConfig;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayDeque;
@@ -18,8 +19,7 @@ import java.util.UUID;
  */
 public final class AntiFarmLimiter {
 
-    private static final int MAX_DROPS = 5;
-    private static final long WINDOW_MS = 5 * 60 * 1000L; // 5 minutes
+    // Values read from config at call time so live changes take effect.
 
     private static final Map<UUID, Deque<Long>> timestamps = new HashMap<>();
 
@@ -28,12 +28,14 @@ public final class AntiFarmLimiter {
         long now = System.currentTimeMillis();
         Deque<Long> window = timestamps.computeIfAbsent(player.getUUID(), k -> new ArrayDeque<>());
 
-        // evict timestamps outside the rolling window
-        while (!window.isEmpty() && now - window.peekFirst() > WINDOW_MS) {
+        long windowMs = ATGConfig.ANTI_FARM_WINDOW_SECONDS.get() * 1000L;
+        int maxDrops  = ATGConfig.ANTI_FARM_MAX_DROPS.get();
+
+        while (!window.isEmpty() && now - window.peekFirst() > windowMs) {
             window.pollFirst();
         }
 
-        if (window.size() >= MAX_DROPS) return false;
+        if (window.size() >= maxDrops) return false;
 
         window.addLast(now);
         return true;
