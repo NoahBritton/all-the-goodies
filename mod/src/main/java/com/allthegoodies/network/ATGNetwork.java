@@ -3,10 +3,8 @@ package com.allthegoodies.network;
 import com.allthegoodies.AllTheGoodies;
 import com.allthegoodies.client.CacheOpenToast;
 import com.allthegoodies.client.WildCacheRoulette;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.util.thread.EffectiveSide;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -27,7 +25,7 @@ public final class ATGNetwork {
                 CacheOpenToastPayload.TYPE,
                 CacheOpenToastPayload.CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() ->
-                        CacheOpenToast.show(payload.rarityOrdinal(), payload.itemCount())));
+                        CacheOpenToast.show(payload.rarityOrdinal(), payload.items())));
     }
 
     private ATGNetwork() {}
