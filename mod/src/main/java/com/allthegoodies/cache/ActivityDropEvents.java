@@ -1,6 +1,7 @@
 package com.allthegoodies.cache;
 
 import com.allthegoodies.AllTheGoodies;
+import com.allthegoodies.config.ATGConfig;
 import com.allthegoodies.progression.ProgressionTier;
 import com.allthegoodies.registry.ATGItems;
 import net.minecraft.server.level.ServerLevel;
@@ -27,11 +28,7 @@ import net.neoforged.neoforge.event.level.BlockDropsEvent;
 @EventBusSubscriber(modid = AllTheGoodies.MODID)
 public final class ActivityDropEvents {
 
-    /** 1-in-20 chance on mob kill */
-    private static final int MOB_KILL_CHANCE = 20;
-
-    /** 1-in-50 chance on ore break — keeps drops lucky even through vein mining */
-    private static final int ORE_BREAK_CHANCE = 50;
+    // Drop chances are read from ATGConfig at event time so live config changes take effect.
 
     @SubscribeEvent
     public static void onMobKill(LivingDeathEvent event) {
@@ -53,8 +50,9 @@ public final class ActivityDropEvents {
 
         if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
         if (!(event.getEntity() instanceof Monster)) return;
+        if (!ATGConfig.ENABLED.get()) return;
 
-        if (level.getRandom().nextInt(MOB_KILL_CHANCE) != 0) return;
+        if (level.getRandom().nextInt(ATGConfig.MOB_KILL_CHANCE.get()) != 0) return;
 
         grantCache(player, level);
     }
@@ -72,7 +70,8 @@ public final class ActivityDropEvents {
                 && !event.getState().is(BlockTags.REDSTONE_ORES)
                 && !event.getState().is(BlockTags.COPPER_ORES)) return;
 
-        if (level.getRandom().nextInt(ORE_BREAK_CHANCE) != 0) return;
+        if (!ATGConfig.ENABLED.get()) return;
+        if (level.getRandom().nextInt(ATGConfig.ORE_BREAK_CHANCE.get()) != 0) return;
 
         grantCache(player, level);
     }
