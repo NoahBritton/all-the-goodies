@@ -1,0 +1,6 @@
+{
+  "name": "Progression Tiers",
+  "description": "How the game knows where you are and scales rewards to match.",
+  "icon": "minecraft:nether_star",
+  "sortnum": 1
+}

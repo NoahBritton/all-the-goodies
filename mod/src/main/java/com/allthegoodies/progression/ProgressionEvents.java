@@ -25,16 +25,23 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 @EventBusSubscriber(modid = AllTheGoodies.MODID)
 public final class ProgressionEvents {
 
+    private static final ResourceLocation ATM_STAR_ID = ResourceLocation.parse("allthetweaks:atm_star");
+    public static final int STARS_NEEDED = 25;
+
     @SubscribeEvent
     public static void onItemPickup(ItemEntityPickupEvent.Post event) {
         ItemStack stack = event.getOriginalStack();
         if (stack == null || stack.isEmpty()) return;
-        tryRaise(event.getPlayer(), ProgressionMilestones.forItem(itemId(stack)));
+        ResourceLocation id = itemId(stack);
+        tryRaise(event.getPlayer(), ProgressionMilestones.forItem(id));
+        if (ATM_STAR_ID.equals(id)) trackStar(event.getPlayer(), stack.getCount());
     }
 
     @SubscribeEvent
     public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
-        tryRaise(event.getEntity(), ProgressionMilestones.forItem(itemId(event.getCrafting())));
+        ResourceLocation id = itemId(event.getCrafting());
+        tryRaise(event.getEntity(), ProgressionMilestones.forItem(id));
+        if (ATM_STAR_ID.equals(id)) trackStar(event.getEntity(), event.getCrafting().getCount());
     }
 
     @SubscribeEvent
@@ -56,6 +63,19 @@ public final class ProgressionEvents {
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────
+
+    private static void trackStar(Player player, int count) {
+        if (!(player instanceof ServerPlayer serverPlayer)) return;
+        int prev  = player.getData(ATGAttachments.ATM_STAR_COUNT.get());
+        int total = Math.min(prev + count, STARS_NEEDED);
+        if (total <= prev) return;
+        player.setData(ATGAttachments.ATM_STAR_COUNT.get(), total);
+        String suffix = total >= STARS_NEEDED ? " — Pack complete!" : "";
+        serverPlayer.sendSystemMessage(Component.literal(
+                "★ ATM Star " + total + "/" + STARS_NEEDED + suffix)
+                .withStyle(total >= STARS_NEEDED ? ChatFormatting.GOLD : ChatFormatting.YELLOW));
+    }
+
     private static ResourceLocation itemId(ItemStack stack) {
         return BuiltInRegistries.ITEM.getKey(stack.getItem());
     }

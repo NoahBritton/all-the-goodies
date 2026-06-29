@@ -1,0 +1,17 @@
+{
+  "name": "Rarity",
+  "category": "allthegoodies:caches",
+  "icon": "allthegoodies:cache_covert",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Every cache rolls its rarity before revealing loot. Rarity controls which pool it draws from — higher rarity means better items at your current tier.$(br2)Default odds out of 10,000 rolls:"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Rarity Odds",
+      "text": "$(li)$(gray)Common$() — 79.00%$(br)$(li)$(aqua)Uncommon$() — 15.00%$(br)$(li)$(blue)Rare$() — 4.70%$(br)$(li)$(dark_purple)Epic$() — 0.90%$(br)$(li)$(gold)Legendary$() — 0.30%$(br)$(li)$(red)Mythic$() — 0.10%$(br2)Server admins can tune these weights in the config file."
+    }
+  ]
+}

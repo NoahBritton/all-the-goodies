@@ -4,6 +4,7 @@ import com.allthegoodies.AllTheGoodies;
 import com.allthegoodies.cache.CacheOpening;
 import com.allthegoodies.cache.RarityTier;
 import com.allthegoodies.progression.ATGAttachments;
+import com.allthegoodies.progression.ProgressionEvents;
 import com.allthegoodies.progression.ProgressionTier;
 import com.allthegoodies.registry.ATGItems;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -59,7 +60,9 @@ public final class ATGCommands {
                                 .executes(ctx -> giveCaches(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "count")))))
                 .then(open)
                 .then(Commands.literal("zombie")
-                        .executes(ctx -> spawnDebugZombie(ctx.getSource())));
+                        .executes(ctx -> spawnDebugZombie(ctx.getSource())))
+                .then(Commands.literal("stars")
+                        .executes(ctx -> showStars(ctx.getSource())));
 
         event.getDispatcher().register(root);
     }
@@ -96,6 +99,18 @@ public final class ATGCommands {
                         "Force-opened " + rarity.name() + " @ ppt " + ppt + " → " + granted + " item(s)")
                 .withStyle(ChatFormatting.GRAY), false);
         return granted;
+    }
+
+    private static int showStars(CommandSourceStack src) throws CommandSyntaxException {
+        ServerPlayer p = src.getPlayerOrException();
+        int count = p.getData(ATGAttachments.ATM_STAR_COUNT.get());
+        int needed = ProgressionEvents.STARS_NEEDED;
+        String line = count >= needed
+                ? "★ " + count + "/" + needed + " ATM Stars — Pack complete!"
+                : "★ " + count + "/" + needed + " ATM Stars collected";
+        ChatFormatting color = count >= needed ? ChatFormatting.GOLD : ChatFormatting.YELLOW;
+        src.sendSuccess(() -> Component.literal(line).withStyle(color), false);
+        return count;
     }
 
     private static int spawnDebugZombie(CommandSourceStack src) throws CommandSyntaxException {
