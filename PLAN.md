@@ -5,73 +5,91 @@
 
 ## Where we are (status snapshot)
 
+**v0.1 shipped & tagged.** All six MVP items from SPEC §5.1 are done, plus the wild-cache
+reveal animation (which the spec had filed under post-MVP polish — we're ahead).
+
 **Shipped to `main`:**
 - PPT engine (0–6), data-attachment, latches upward — `ProgressionTier`
-- Milestone detectors: 5 event signals (pickup/craft/smelt/ore-mine/dimension), verified ATM10 marker IDs — `ProgressionEvents`, `ProgressionMilestones`
-- Debug commands: `/atg ppt [set]`, `/atg cache`, `/atg open` — `ATGCommands`
-- ATM Cache item — right-click opens, rolls rarity, pulls loot table — `ATMCacheItem` + `CacheOpening` + `CacheRoller`
-- `wild_cache` block — breakable, rolls rarity on break, drops matching colored cache — `WildCacheBlock`
-- 6 colored caches (consumer→covert), two-layer roll wired — `ColoredCacheItem`
-- NeoForge pinned to 21.1.234 (matches ATM10 live)
-- Dev workflow: symlinked JAR into the ATM10 instance; `/reload` for loot, F3+T for textures
+- Milestone detectors: pickup/craft/smelt/ore-mine/dimension, verified marker IDs — `ProgressionEvents`, `ProgressionMilestones`
+- ATM Star Tracker — counts stars to 25, `/atg stars`
+- 42 loot pools (ppt0–ppt6 × 6 rarities), all `minecraft:chest` type
+- ATM Cache + 6 colored caches, two-layer roll wired — `ATMCacheItem`, `ColoredCacheItem`, `CacheOpening`, `CacheRoller`
+- Activity drops (mob kill / ore break), PPT-weighted, anti-farm rolling window — `ActivityDropEvents`, `AntiFarmLimiter`
+- Server config: master toggle, drop rates, anti-farm caps, rarity weights — `ATGConfig`
+- JEI + JADE integration; Patchouli "What Now?" guidebook
+- Creative tab, honest-odds tooltip on the ATM Cache
+- **Wild-cache reveal:** rising color-rolling spiral → apex burst → float → homing fly-to-player, one per nearby player, fully server-synced — `WildCacheRoulette`, `CacheHomingManager`, `ATGScheduler`, network package
+- Loot-open toast lists actual items won
 
-**Not done:** 40/42 loot pools empty · no activity drops · no anti-farm · no config · no transparency tooltip · no QoL helpers.
-
----
-
-## Roadmap — 3 milestones to v0.1
-
-### M1 — "The Loop Is Real" (v0.1-alpha)  ← current focus
-*DoD: play ATM10 normally for ~20 min and you organically receive caches; every rarity gives a tier-appropriate reward; an AFK mob farm can't mint caches.*
-- All 42 loot pools filled (small is fine)
-- Activity drops (mining ore / mob kills / natural chests), PPT-weighted, low %
-- Milestone drops verified (tier-up → one cache)
-- Anti-farm limiter (rolling per-window cap / diminishing returns)
-
-### M2 — "Honest & Tunable" (v0.1-beta)
-*DoD: Noah (or a server) can fully control the experience without touching code.*
-- Transparency: cache tooltip shows rarity odds + current PPT (SPEC §3.6 — "honest gambling" pillar)
-- Config: master toggle, drop rates, rarity weights, anti-farm caps, "purist" preset
-- Playtest-tuning pass (drop feel, Caches/hour)
-
-### M3 — "Orientation" (v0.1 release)
-*DoD: SPEC §5.1 MVP list satisfied. Tag v0.1.*
-- ATM Star Tracker (live have/need checklist)
-- "What Now?" guidebook
-- JADE source/pickaxe tooltips
+**Debug:** `/atg ppt [set]`, `/atg cache [n]`, `/atg open <rarity> [ppt]`, `/atg stars`, `/atg zombie`
 
 ---
 
-## Current Sprint — "Fill the loot + wire the drops" (M1)
+## Roadmap
 
-| # | Ticket | State | Notes |
-|---|--------|-------|-------|
-| 1 | All 42 loot pools filled | 🔄 in progress | ppt0 common+mythic done; uncommon/rare/epic started. Tier 3+ modded IDs flagged for JEI verify. |
-| 2 | Activity drops | ⬜ todo | `LivingDeathEvent` + `BlockEvent.BreakEvent` → low-% colored cache, PPT-weighted color |
-| 3 | Anti-farm limiter | ⬜ todo | rolling window cap on cache grants; depends on #2 |
-| 4 | Verify milestone drops | ⬜ todo | confirm tier-up still grants a cache after refactors |
+### ✅ M1 — "The Loop Is Real" (v0.1-alpha) — DONE
+### ✅ M2 — "Honest & Tunable" (v0.1-beta) — DONE
+### ✅ M3 — "Orientation" (v0.1) — DONE · **tagged v0.1**
+### ✅ Bonus — Wild-cache reveal animation (the earned reward) — DONE
 
-**Sprint DoD:** force-open every rarity → real loot; play 20 min → ≥1 organic cache; AFK farm → no caches.
+---
+
+## 🎯 Proposed next sprint — pick a direction
+
+We finished the *loop*. Three coherent directions for v0.2; my recommendation first.
+**This is Noah's call** — the rest of this section is a proposal, not a commitment.
+
+### ⭐ Recommended: v0.2 "Worth Opening" — make the loot actually exciting
+
+*Why:* the loot system is the headline feature (SPEC §3), but M1's bar was "pools start
+small." The loop works; the rewards are still placeholder-grade. Reward quality + the gamble
+feeling real is the biggest unrealized lever for fun — and it's mostly solo-able, data-driven
+work (aligns with SPEC pillar 3). No worldgen, no scope risk.
+
+| # | Ticket | Notes |
+|---|--------|-------|
+| 1 | **Loot ID audit & fix** | Verify every modded ID in the real ATM10 JEI. High-risk: `allthemodium:allthemodium_pickaxe` / `vibranium_pickaxe` / `unobtainium_pickaxe` (ATM tool tiers are often Silent Gear / Tinkers, not plain picks). Likely-fine: the ingots, `piglich_heart`, `mekanism:ingot_osmium`. **Needs Noah to boot ATM10** for JEI lookups. |
+| 2 | **Real jackpots per tier** | Author the §3.2 "Knife" Mythic + Legendary rewards so every tier has a genuine standout. Use Silent Gear / pre-enchanted gear with good pre-rolled traits (Noah's "classified armor → silent gear that rolls fun stuff, pre-weighted toward decent stats" idea). |
+| 3 | **Colored-cache odds tooltip** | The transparency we deferred: a colored cache shows its reward odds for *that color × current PPT*. Honest-gambling pillar (§3.6). |
+| 4 | **Prime Cache** | A rare cache guaranteeing a minimum color — the occasional big find (SPEC §3.4 "Later"). |
+| 5 | *(stretch)* **Ore-value scaling** | Diamond / ancient-debris / modded rare ores bias toward a better cache + higher drop %; coal stays at the floor. |
+
+**DoD:** every tier has a jackpot that makes you go "!"; all modded IDs resolve in ATM10;
+opening a colored cache shows honest odds; Prime Caches exist as a rare thrill.
+
+### Alt A — v0.2 "Found in the World" (worldgen + presentation)
+Make wild caches a real exploration object: half-buried "gravestone" crate worldgen (see the
+Wild Cache concept), crate-shaped block model + crash-landed tilt, mob guard. **Caveat:**
+SPEC §4 flags worldgen as a core non-goal (keeps existing worlds compatible) — additive
+new-chunk-only gen may be OK but it's a design decision. Also Noah wants to teach build design
+next session, so the cache *builds* are better done collaboratively than solo.
+
+### Alt B — v0.2 "The Opening Roulette" (the CS:GO scroll GUI)
+The horizontal item-ticker that scrolls, decelerates, and lands on the reward when you open a
+colored cache (SPEC §3.5 "Later"). One big, juicy feature — but we just shipped a reveal
+animation, and the open-toast you approved already covers the basics. Higher polish, narrower
+value than "Worth Opening."
 
 ---
 
 ## Icebox — the scope fence 🧊
 
-These are **explicitly not** in v0.1. When a shiny idea appears mid-sprint, it lands here with a note and we do **not** touch it until the current milestone's DoD is met.
+Explicitly **not** in the next sprint. Shiny mid-sprint ideas land here; we don't touch them
+until the current DoD is met.
 
-- **Particle roulette reveal** — note block trills rolling through rarities, colored dust, poof + item plop on landing (Noah's vision, 2026-06-27). *The reward for finishing M1–M3.*
-- `wild_cache` worldgen (half-buried gravestone + terrain rubble + mob guard)
+- ✅ ~~Particle roulette reveal~~ — **shipped** (the wild-cache reveal)
+- `wild_cache` worldgen (half-buried gravestone + terrain rubble + mob guard) — *see Alt A*
 - Crate-shaped block model + crash-landed tilt (block entity renderer)
-- Roulette GUI (CS:GO scroll animation)
-- Prime Cache (guaranteed-minimum-color find)
-- **Ore-value scaling** — diamond/ancient debris/modded rare ores bias toward higher rarity cache + higher drop %, coal stays at floor (M2 tuning pass)
-- **Cache Buster** — tool/item that instantly breaks wild_cache blocks, maybe AOE
-- **Cache Mass-Opener** — right-click a stack to open all at once with summary readout
+- Roulette GUI (CS:GO scroll animation) — *see Alt B*
+- Prime Cache — *promoted into the recommended sprint*
+- Ore-value scaling — *stretch in the recommended sprint*
+- **Cache Buster** — tool that instantly breaks wild_cache blocks, maybe AOE
+- **Cache Mass-Opener** — right-click a stack to open all at once with a summary readout
 - **Fusion Block** — combine N lower-tier caches into 1 higher-tier
 - **Cache Merchant Villager** — special trades: caches for rare items
-- **Music HUD mod** — separate mod, show currently playing ATM music track name (probably exists already)
-- FTB Quests PPT signals
-- Other QoL: tech-wall bridge kits, safety-net items, Dimensional Atlas, boss-prep checklist
+- **Music HUD mod** — separate mod, show currently-playing ATM track name
+- FTB Quests PPT signals + reward delivery
+- Other QoL (SPEC §4): tech-wall bridge kits, safety-net items, Dimensional Atlas, boss-prep checklist, myth pages
 
 ---
 
@@ -80,5 +98,9 @@ These are **explicitly not** in v0.1. When a shiny idea appears mid-sprint, it l
 1. **One branch per ticket** → build → test in the real ATM10 pack → squash-merge → delete branch.
 2. **Stick to the script.** New ideas go to the Icebox, not the current branch. Claude holds Noah accountable.
 3. **Model tiers:** planning/architecture/stuck-bugs → Opus. Executing well-defined tickets (loot JSON, event boilerplate) → Sonnet. Don't burn Opus on grunt work.
-4. **Fast loop = `runClient`** (no pack, ~15s) for compile/registration checks; **real loop = ATM10 instance** for pack-dependent behavior. `/reload` for loot, F3+T for textures — avoid full restarts.
+4. **Fast loop = `runClient`** (no pack, ~15s) for compile/registration checks; **real loop = ATM10 instance** for pack-dependent behavior (modded item IDs, JEI). `/reload` for loot, F3+T for textures.
 5. **Identity:** this is a Noah repo — `NoahBritton` git identity + `gh auth switch` verified before any push/merge. Never mix Candy.
+
+> **Note on testing limits:** `runClient` has no ATM10 mods, so modded item IDs can't be
+> verified there (they log as "unknown registry key" — harmless in dev, but it means ticket #1
+> of "Worth Opening" needs Noah to boot the real pack).
