@@ -100,17 +100,35 @@ feel different from a Mythic at PPT 5 while both feel like jackpots.
 - **Anti-farm:** a soft rate limiter / diminishing returns so AFK mob farms can't mint Caches
   (e.g., a rolling per-window cap; ore drops weighted by *new* blocks). All config-tunable.
 
-### 3.4 Cache items
+### 3.4 Cache items — tangible colored caches (revised 2026-06-26)
 
-- **MVP:** a single **ATM Cache** item whose contents scale by the opener's PPT.
-- **Later:** a rarer **Prime Cache** that guarantees a higher minimum rarity, as an occasional
-  big find.
+Rather than one cache that hides its rarity until opened, **rarity is a visible, tangible colored
+cache you collect** — the authentic CS:GO loop, and a stronger hit (you see what you got *before*
+opening). It's a **two-layer gamble**:
+
+1. **A source gives you a colored cache.** Breaking a `wild_cache` block, an activity/mob drop, or
+   a milestone rolls a **rarity color** and drops *that* cache into your inventory — it does **not**
+   auto-open; you collect/stockpile and open at will (satisfying batch sessions).
+2. **Opening a colored cache rolls the reward**, with odds set by **that cache's color × your PPT**.
+   Higher color = **better odds** toward the standout items (not a guarantee). The **floor rule
+   still holds** — nothing ever rolls below your current progression tier.
+
+**Color ladder (CS:GO):** gray *Consumer* · light-blue *Industrial* · blue *Mil-Spec* · purple
+*Restricted* · pink *Classified* · red *Covert* · **gold ★ Rare-Special = the "knife" jackpot**.
+Maps onto §3.2's rarities; colors/weights stay data-driven so they retune per pack version (6 or
+7 tiers is a config choice).
+
+- **MVP:** the colored caches + two-layer roll. One ATM Cache item per color (or one item carrying
+  a color data-component), opened by right-click.
+- **Later:** a rarer **Prime Cache** guaranteeing a higher minimum color, as an occasional big find.
 
 ### 3.5 Opening UX
 
 - **MVP:** right-click the Cache → server rolls → reward(s) go to inventory + a color-coded
   toast/chat line announcing the rarity. Simple, robust.
 - **Later (polish):** a CS:GO-style roulette/scroll animation GUI. Explicitly **not MVP**.
+- **One roulette, not two:** breaking the block is a quick *reveal* of which color cache dropped (a
+  small flourish); the **opening** is the single roulette. Avoid two full roulettes back-to-back.
 
 ### 3.6 Transparency
 
@@ -212,6 +230,10 @@ The full Cache **loop**, plus the highest-leverage info helpers:
 
 ## 9. Decision log
 
+- **2026-06-26 (eve)** — Cache **rarity made tangible**: instead of a hidden roll at open-time, a
+  source rolls a **colored cache** you hold, and opening it rolls the reward (odds = color × PPT,
+  never below your tier). Two-layer gamble, CS:GO color ladder (gray → gold "knife"). Breaking the
+  `wild_cache` block drops the colored cache (no auto-open). Updates §3.4/§3.5.
 - **2026-06-26** — Project reframed: the "goodie bags" are a CS:GO-crate-style
   **progression-aware loot system** (now the headline feature); QoL helpers become supporting
   and double as rewards. MVP = full Cache loop + guidebook + JADE tooltips + ATM Star Tracker.
