@@ -1,6 +1,7 @@
 package com.allthegoodies.cache;
 
 import com.allthegoodies.AllTheGoodies;
+import com.allthegoodies.network.CacheOpenToastPayload;
 import com.allthegoodies.progression.ProgressionTier;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
@@ -14,6 +15,7 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 import java.util.Locale;
@@ -44,7 +46,7 @@ public final class CacheOpening {
         for (ItemStack reward : rolled) {
             player.getInventory().placeItemBackInInventory(reward);
         }
-        announce(player, ppt, rarity, rolled.size());
+        PacketDistributor.sendToPlayer(player, new CacheOpenToastPayload(rarity.ordinal(), rolled.size()));
         return rolled.size();
     }
 
