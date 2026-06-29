@@ -16,6 +16,7 @@ java {
 
 repositories {
     mavenCentral()
+    maven { url "https://maven.blamejared.com" }
 }
 
 neoForge {
@@ -39,8 +40,7 @@ neoForge {
 }
 
 dependencies {
-    // Add compile-only / runtime mod deps here as the project grows
-    // (JEI, JADE, FTB Quests, Mekanism, Allthemodium ...).
+    compileOnly "mezz.jei:jei-1.21.1-neoforge-api:19.27.0.343"
 }
 
 tasks.withType(JavaCompile).configureEach {
