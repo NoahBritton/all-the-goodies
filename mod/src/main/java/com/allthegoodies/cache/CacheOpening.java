@@ -2,10 +2,7 @@ package com.allthegoodies.cache;
 
 import com.allthegoodies.AllTheGoodies;
 import com.allthegoodies.network.CacheOpenToastPayload;
-import com.allthegoodies.progression.ProgressionTier;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -22,7 +19,7 @@ import java.util.Locale;
 
 /**
  * Shared "open one Cache" logic: resolve the data-driven {@code caches/ppt<N>/<rarity>} loot
- * table, grant its rolls to the player, and announce the result. Used by both
+ * table, grant its rolls to the player, and send a quick result toast. Used by both
  * {@link ATMCacheItem} (normal right-click) and the debug command (forced opens).
  *
  * <p>A missing pool resolves to the empty loot table (no items), so the 7×6 matrix can be
@@ -43,21 +40,18 @@ public final class CacheOpening {
                 .create(LootContextParamSets.CHEST);
 
         List<ItemStack> rolled = table.getRandomItems(params);
+
+        // Snapshot what was won (capped) for the toast before inserting consumes/mutates the stacks.
+        List<ItemStack> forToast = rolled.stream()
+                .limit(CacheOpenToastPayload.MAX_ITEMS)
+                .map(ItemStack::copy)
+                .toList();
+
         for (ItemStack reward : rolled) {
             player.getInventory().placeItemBackInInventory(reward);
         }
-        PacketDistributor.sendToPlayer(player, new CacheOpenToastPayload(rarity.ordinal(), rolled.size()));
+        PacketDistributor.sendToPlayer(player, new CacheOpenToastPayload(rarity.ordinal(), forToast));
         return rolled.size();
-    }
-
-    /** Color-coded chat line announcing the rarity, tier, and item count. */
-    public static void announce(ServerPlayer player, int ppt, RarityTier rarity, int granted) {
-        Component line = Component.literal("ATM Cache → ").withStyle(ChatFormatting.WHITE)
-                .append(Component.literal(rarity.flavor + " (" + rarity.name() + ")").withStyle(rarity.color))
-                .append(Component.literal(
-                        "  • tier " + ppt + " " + ProgressionTier.name(ppt) + " • " + granted + " item(s)")
-                        .withStyle(ChatFormatting.DARK_GRAY));
-        player.sendSystemMessage(line);
     }
 
     private CacheOpening() {}

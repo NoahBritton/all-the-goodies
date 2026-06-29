@@ -16,7 +16,8 @@ public final class ATGBlocks {
             () -> new WildCacheBlock(BlockBehaviour.Properties.of()
                     .strength(1.5f, 6.0f)
                     .sound(SoundType.WOOD)
-                    .noOcclusion()));
+                    .noOcclusion()
+                    .noLootTable()));   // the reveal grants the cache — no block-break loot drop
 
     private ATGBlocks() {}
 }

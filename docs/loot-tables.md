@@ -10,10 +10,11 @@ caches/ppt<N>/<rarity>      →  data/allthegoodies/loot_table/caches/ppt<N>/<ra
 - `<rarity>` = `common | uncommon | rare | epic | legendary | mythic` (SPEC.md §3.2).
 
 That's a **7 × 6 = 42** table matrix. Missing tables resolve to "no items" (safe), so fill
-them in incrementally. Only `ppt0/common` and `ppt0/mythic` exist so far as examples.
+them in incrementally. All 42 are now populated.
 
 Guidelines:
-- Use `"type": "minecraft:advancement_reward"` (matches the param set the Cache rolls with).
+- Use `"type": "minecraft:chest"` — the Cache rolls with the `CHEST` loot context param set
+  (see `CacheOpening`). The earlier `advancement_reward` set silently produced empty drops.
 - Magnitude should follow SPEC.md §3.2: common/uncommon = small, rare/epic = medium,
   legendary = large, **mythic = the "Knife"** (one standout item perfectly timed to that tier).
 - Reference ATM item ids from `docs/09-atm-star.md` / the pack's JEI when authoring higher
