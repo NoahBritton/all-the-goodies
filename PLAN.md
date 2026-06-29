@@ -70,6 +70,11 @@ colored cache (SPEC §3.5 "Later"). One big, juicy feature — but we just shipp
 animation, and the open-toast you approved already covers the basics. Higher polish, narrower
 value than "Worth Opening."
 
+> **Design rule (Noah, 2026-06-29):** the roulette is a *reward for high rarity, not a tax on
+> every open*. Low-rarity caches (Common/Uncommon/Rare) open instantly with the toast — sitting
+> through a scroll for a gray cache would ruin batch-opening. Reserve the scroll for the
+> high-tier caches (lean Epic+; exact threshold config-tunable). Keep the instant path as default.
+
 ---
 
 ## Icebox — the scope fence 🧊
